@@ -1,4 +1,4 @@
-﻿<script setup>
+<script setup>
 import { computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import dayjs from "dayjs";
@@ -229,9 +229,12 @@ const recCatForToday = computed(() => courses.categories.find(c => c.id === toda
 
         <div v-if="recommended" class="rec-body">
           <div class="cover-large" :class="`cat-${recommended.category}`">
-            <div class="cover-glow" />
+            <img v-if="recommended.cover" :src="recommended.cover" :alt="recommended.name" class="cover-large-img" referrerpolicy="no-referrer" />
+            <template v-else>
+              <div class="cover-glow" />
+              <div class="cover-letter">{{ recommended.name[0] }}</div>
+            </template>
             <div class="cover-label mono">{{ recCatLabel }}</div>
-            <div class="cover-letter">{{ recommended.name[0] }}</div>
           </div>
           <div class="content-info">
             <div class="info-cat">
@@ -576,6 +579,12 @@ const recCatForToday = computed(() => courses.categories.find(c => c.id === toda
   &.cat-boxing  { background: linear-gradient(135deg, #FFD23C, #FF8E3C); }
   &.cat-fatburn { background: linear-gradient(135deg, #00E676, #00E5FF); }
   &.cat-shape   { background: linear-gradient(135deg, #7B5BFF, #00E5FF); }
+}
+.cover-large-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  position: absolute; inset: 0;
+  z-index: 1;
 }
 .cover-glow {
   position: absolute; inset: -30%;

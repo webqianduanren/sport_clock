@@ -1,4 +1,4 @@
-﻿<script setup>
+<script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
@@ -150,8 +150,11 @@ async function removeCourse(course) {
       >
         <div class="wedge" :style="{ '--wedge-color': categories.find(x => x.id === c.category)?.color }" />
         <div class="c-cover">
-          <div class="c-glow" />
-          <div class="c-letter">{{ c.name[0] }}</div>
+          <img v-if="c.cover" :src="c.cover" :alt="c.name" class="c-cover-img" referrerpolicy="no-referrer" />
+          <template v-else>
+            <div class="c-glow" />
+            <div class="c-letter">{{ c.name[0] }}</div>
+          </template>
           <div class="c-duration mono">{{ c.duration }} 分钟</div>
           <div v-if="c.custom" class="c-tag">自定义</div>
           <div class="c-level mono">{{ c.level }}</div>
@@ -184,8 +187,11 @@ async function removeCourse(course) {
         <div class="feat-tag tape-strip">精选 · 今晚推荐</div>
         <div class="feat-body">
           <div class="feat-cover">
-            <div class="c-glow" />
-            <div class="feat-letter">{{ featured.name[0] }}</div>
+            <img v-if="featured.cover" :src="featured.cover" :alt="featured.name" class="feat-cover-img" referrerpolicy="no-referrer" />
+            <template v-else>
+              <div class="c-glow" />
+              <div class="feat-letter">{{ featured.name[0] }}</div>
+            </template>
             <div class="feat-cat-tag mono">{{ categories.find(x => x.id === featured.category)?.name }}</div>
           </div>
           <div class="feat-info">
@@ -240,8 +246,11 @@ async function removeCourse(course) {
             @click="play(c)"
           >
             <div class="lc-cover">
-              <div class="c-glow" />
-              <div class="lc-letter">{{ c.name[0] }}</div>
+              <img v-if="c.cover" :src="c.cover" :alt="c.name" class="lc-cover-img" referrerpolicy="no-referrer" />
+              <template v-else>
+                <div class="c-glow" />
+                <div class="lc-letter">{{ c.name[0] }}</div>
+              </template>
               <div v-if="c.custom" class="c-tag">自定义</div>
             </div>
             <div class="lc-body">
@@ -402,6 +411,12 @@ async function removeCourse(course) {
   display: flex; align-items: center; justify-content: center;
   overflow: hidden;
 }
+.c-cover-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  position: absolute; inset: 0;
+  z-index: 1;
+}
 .c-glow {
   position: absolute; inset: -30%;
   background: radial-gradient(circle, rgba(255, 255, 255, 0.25), transparent 60%);
@@ -521,6 +536,12 @@ async function removeCourse(course) {
   border-radius: var(--radius);
   display: flex; align-items: center; justify-content: center;
   overflow: hidden;
+}
+.feat-cover-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  position: absolute; inset: 0;
+  z-index: 1;
 }
 .feat-letter {
   font-family: var(--font-display);
@@ -646,6 +667,12 @@ async function removeCourse(course) {
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
+}
+.lc-cover-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  position: absolute; inset: 0;
+  z-index: 1;
 }
 .lc-letter {
   font-family: var(--font-display);

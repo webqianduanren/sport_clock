@@ -1,4 +1,4 @@
-﻿<script setup>
+<script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
@@ -33,27 +33,43 @@ onMounted(async () => {
 
 const filtered = computed(() => {
   let list = courses.all;
-  if (activeCat.value !== "all") list = list.filter((c) => c.category === activeCat.value);
+  if (activeCat.value !== "all")
+    list = list.filter((c) => c.category === activeCat.value);
   if (search.value.trim()) {
     const k = search.value.trim().toLowerCase();
-    list = list.filter((c) => c.name.toLowerCase().includes(k) || (c.desc || "").toLowerCase().includes(k));
+    list = list.filter(
+      (c) =>
+        c.name.toLowerCase().includes(k) ||
+        (c.desc || "").toLowerCase().includes(k)
+    );
   }
   return list;
 });
 
-const selectedCourse = computed(() => (selectedId.value ? courses.byId[selectedId.value] : null));
+const selectedCourse = computed(() =>
+  selectedId.value ? courses.byId[selectedId.value] : null
+);
 
 const selectedCatColor = computed(() => {
   if (!selectedCourse.value) return "var(--color-flame)";
-  return courses.categories.find(c => c.id === selectedCourse.value.category)?.color || "var(--color-flame)";
+  return (
+    courses.categories.find((c) => c.id === selectedCourse.value.category)
+      ?.color || "var(--color-flame)"
+  );
 });
 
 // 根据所选课程推断强度
 const suggestedEffort = computed(() => {
   if (!selectedCourse.value) return 3;
-  return { hiit: 5, boxing: 4, cardio: 3, fatburn: 2, shape: 2 }[selectedCourse.value.category] || 3;
+  return (
+    { hiit: 5, boxing: 4, cardio: 3, fatburn: 2, shape: 2 }[
+      selectedCourse.value.category
+    ] || 3
+  );
 });
-watch(suggestedEffort, (v) => { effort.value = v; });
+watch(suggestedEffort, (v) => {
+  effort.value = v;
+});
 
 const effortZones = [
   { i: 1, color: "var(--color-zone-1)", name: "Z1", desc: "恢复" },
@@ -90,7 +106,9 @@ async function submit() {
   }
 }
 
-function clearSelection() { selectedId.value = null; }
+function clearSelection() {
+  selectedId.value = null;
+}
 
 const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
 </script>
@@ -100,10 +118,19 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
     <div class="head-bar fade-up">
       <div>
         <div class="page-title">打卡 · 今晚打卡</div>
-        <p class="head-sub mono">// {{ isUpdate ? "更新今日记录" : "新训练" }} · 共 {{ filtered.length }} 节课</p>
+        <p class="head-sub mono">
+          // {{ isUpdate ? "更新今日记录" : "新训练" }} · 共
+          {{ filtered.length }} 节课
+        </p>
       </div>
       <div class="head-tag">
-        <div class="tape-strip" :style="{ background: isUpdate ? 'var(--color-cyan)' : 'var(--color-acid)', color: 'var(--color-ink-0)' }">
+        <div
+          class="tape-strip"
+          :style="{
+            background: isUpdate ? 'var(--color-cyan)' : 'var(--color-acid)',
+            color: 'var(--color-ink-0)',
+          }"
+        >
           {{ isUpdate ? "更新记录" : "全新训练" }}
         </div>
       </div>
@@ -122,7 +149,11 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
 
         <div class="search-wrap">
           <span class="search-icon">⌕</span>
-          <input v-model="search" class="search-input" placeholder="搜索课程名 / 描述" />
+          <input
+            v-model="search"
+            class="search-input"
+            placeholder="搜索课程名 / 描述"
+          />
         </div>
 
         <div class="cat-tabs">
@@ -135,7 +166,7 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
             <span class="cat-tab-count mono">{{ courses.all.length }}</span>
           </button>
           <button
-            v-for="cat in courses.categories.filter(c => c.id !== 'all')"
+            v-for="cat in courses.categories.filter((c) => c.id !== 'all')"
             :key="cat.id"
             class="cat-tab"
             :class="{ active: activeCat === cat.id }"
@@ -143,7 +174,9 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
             @click="activeCat = cat.id"
           >
             <span class="cat-tab-name">{{ cat.name }}</span>
-            <span class="cat-tab-count mono">{{ courses.byCategory(cat.id).length }}</span>
+            <span class="cat-tab-count mono">{{
+              courses.byCategory(cat.id).length
+            }}</span>
           </button>
         </div>
 
@@ -153,12 +186,29 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
             :key="c.id"
             class="course-card"
             :class="{ selected: selectedId === c.id }"
-            :style="{ '--accent': courses.categories.find(x => x.id === c.category)?.color }"
+            :style="{
+              '--accent': courses.categories.find((x) => x.id === c.category)
+                ?.color,
+            }"
             @click="selectedId = c.id"
           >
-            <div class="wedge" :style="{ '--wedge-color': courses.categories.find(x => x.id === c.category)?.color }" />
+            <div
+              class="wedge"
+              :style="{
+                '--wedge-color': courses.categories.find(
+                  (x) => x.id === c.category
+                )?.color,
+              }"
+            />
             <div class="cc-cover">
-              <div class="cc-letter">{{ c.name[0] }}</div>
+              <img
+                v-if="c.cover"
+                :src="c.cover"
+                :alt="c.name"
+                class="cc-cover-img"
+                referrerpolicy="no-referrer"
+              />
+              <div v-else class="cc-letter">{{ c.name[0] }}</div>
               <div class="cc-duration mono">{{ c.duration }} 分钟</div>
             </div>
             <div class="cc-body">
@@ -167,14 +217,18 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
                 <span v-if="c.custom" class="cc-tag">自定义</span>
               </div>
               <div class="cc-meta mono">
-                <span>{{ courses.categories.find(x => x.id === c.category)?.name }}</span>
+                <span>{{
+                  courses.categories.find((x) => x.id === c.category)?.name
+                }}</span>
                 <span>·</span>
                 <span>{{ c.level }}</span>
               </div>
             </div>
             <div v-if="selectedId === c.id" class="cc-check">✓</div>
           </button>
-          <div v-if="!filtered.length" class="empty muted mono">// 没有找到课程</div>
+          <div v-if="!filtered.length" class="empty muted mono">
+            // 没有找到课程
+          </div>
         </div>
       </section>
 
@@ -227,7 +281,10 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
           >
             <div class="ec-num display">Z{{ z.i }}</div>
             <div class="ec-name">{{ z.desc }}</div>
-            <div class="ec-bpm mono">{{ ['', '<120', '120-140', '140-160', '160-175', '175+'][z.i] }} 次/分</div>
+            <div class="ec-bpm mono">
+              {{ ["", "<120", "120-140", "140-160", "160-175", "175+"][z.i] }}
+              次/分
+            </div>
           </button>
         </div>
         <div v-if="selectedCourse" class="suggestion mono">
@@ -255,7 +312,17 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
             <span class="mood-emoji">{{ m.emoji }}</span>
             <span class="mood-text">
               <span class="mood-label">{{ m.label }}</span>
-              <span class="mood-tag mono">{{ m.value === 'great' ? '爆棚' : m.value === 'good' ? '不错' : m.value === 'ok' ? '一般' : m.value === 'tired' ? '累' : '不适' }}</span>
+              <span class="mood-tag mono">{{
+                m.value === "great"
+                  ? "爆棚"
+                  : m.value === "good"
+                  ? "不错"
+                  : m.value === "ok"
+                  ? "一般"
+                  : m.value === "tired"
+                  ? "累"
+                  : "不适"
+              }}</span>
             </span>
             <span v-if="mood === m.value" class="mood-check">●</span>
           </button>
@@ -265,7 +332,13 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
       <!-- 提交栏 -->
       <section class="step submit-section fade-up-d4">
         <div class="submit-bar">
-          <button v-if="selectedCourse" class="btn-clear mono" @click="clearSelection">清除</button>
+          <button
+            v-if="selectedCourse"
+            class="btn-clear mono"
+            @click="clearSelection"
+          >
+            清除
+          </button>
           <button
             class="btn-submit"
             :class="{ active: !!selectedCourse, updating: isUpdate }"
@@ -276,8 +349,12 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
             <span v-else class="btn-content">
               <span class="flame flame-pulse">🔥</span>
               <span class="txt">
-                <span class="txt-cn">{{ isUpdate ? "更新打卡" : "完成打卡" }}</span>
-                <span class="txt-en">{{ isUpdate ? "更新今日记录" : "记录本次训练" }}</span>
+                <span class="txt-cn">{{
+                  isUpdate ? "更新打卡" : "完成打卡"
+                }}</span>
+                <span class="txt-en">{{
+                  isUpdate ? "更新今日记录" : "记录本次训练"
+                }}</span>
               </span>
               <span class="arr">→</span>
             </span>
@@ -289,16 +366,30 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
 </template>
 
 <style lang="scss" scoped>
-.checkin-page { padding-bottom: 80px; }
+.checkin-page {
+  padding-bottom: 80px;
+}
 
 .head-bar {
-  display: flex; align-items: flex-end; justify-content: space-between;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
   margin-bottom: 18px;
-  gap: 12px; flex-wrap: wrap;
+  gap: 12px;
+  flex-wrap: wrap;
 }
-.head-sub { font-size: 10px; color: var(--color-text-2); letter-spacing: 0.2em; margin: 8px 0 0; }
+.head-sub {
+  font-size: 10px;
+  color: var(--color-text-2);
+  letter-spacing: 0.2em;
+  margin: 8px 0 0;
+}
 
-.form { display: flex; flex-direction: column; gap: 16px; }
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
 .step {
   background: var(--color-ink-2);
@@ -308,7 +399,9 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
   position: relative;
 }
 .step-head {
-  display: flex; align-items: center; gap: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
   margin-bottom: 18px;
 }
 .step-num {
@@ -318,14 +411,31 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
   text-shadow: 0 0 14px rgba(255, 46, 46, 0.3);
   letter-spacing: -0.02em;
 }
-.step-info { flex: 1; }
-.step-title { font-size: 18px; font-weight: 900; letter-spacing: 0.04em; }
-.step-sub { font-size: 9px; color: var(--color-text-2); letter-spacing: 0.25em; margin-top: 2px; }
+.step-info {
+  flex: 1;
+}
+.step-title {
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+.step-sub {
+  font-size: 9px;
+  color: var(--color-text-2);
+  letter-spacing: 0.25em;
+  margin-top: 2px;
+}
 
 // 搜索
-.search-wrap { position: relative; max-width: 360px; margin-bottom: 14px; }
+.search-wrap {
+  position: relative;
+  max-width: 360px;
+  margin-bottom: 14px;
+}
 .search-icon {
-  position: absolute; left: 14px; top: 50%;
+  position: absolute;
+  left: 14px;
+  top: 50%;
   transform: translateY(-50%);
   color: var(--color-text-2);
   font-size: 16px;
@@ -340,13 +450,23 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
   color: var(--color-text-0);
   font-family: inherit;
   font-size: 14px;
-  &:focus { outline: none; border-color: var(--color-flame); }
+  &:focus {
+    outline: none;
+    border-color: var(--color-flame);
+  }
 }
 
 // 分类 tab
-.cat-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.cat-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
 .cat-tab {
-  display: inline-flex; align-items: center; gap: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 7px 12px;
   background: var(--color-ink-0);
   border: 1px solid var(--color-line);
@@ -356,7 +476,10 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
   font-family: inherit;
   font-size: 13px;
   transition: all 0.15s;
-  &:hover { border-color: var(--accent, var(--color-flame)); color: var(--color-text-0); }
+  &:hover {
+    border-color: var(--accent, var(--color-flame));
+    color: var(--color-text-0);
+  }
   &.active {
     background: var(--accent, var(--color-flame));
     border-color: var(--accent, var(--color-flame));
@@ -364,7 +487,11 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
     box-shadow: 0 0 12px var(--accent, var(--color-flame));
   }
 }
-.cat-tab-count { font-size: 9px; letter-spacing: 0.1em; opacity: 0.7; }
+.cat-tab-count {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  opacity: 0.7;
+}
 
 // 课程网格
 .course-grid {
@@ -373,7 +500,9 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
   gap: 8px;
 }
 .course-card {
-  display: flex; align-items: center; gap: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   padding: 10px 12px;
   background: var(--color-ink-0);
   border: 1px solid var(--color-line);
@@ -383,7 +512,10 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
   text-align: left;
   position: relative;
   transition: all 0.15s;
-  &:hover { border-color: var(--accent); background: var(--color-ink-3); }
+  &:hover {
+    border-color: var(--accent);
+    background: var(--color-ink-3);
+  }
   &.selected {
     border-color: var(--accent);
     background: color-mix(in srgb, var(--accent) 10%, transparent);
@@ -391,13 +523,28 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
   }
 }
 .cc-cover {
-  width: 52px; height: 52px;
+  width: 52px;
+  height: 52px;
   border-radius: 6px;
-  display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 50%, #000));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    var(--accent),
+    color-mix(in srgb, var(--accent) 50%, #000)
+  );
   flex-shrink: 0;
   position: relative;
   overflow: hidden;
+}
+.cc-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
 }
 .cc-letter {
   font-family: var(--font-display);
@@ -406,19 +553,28 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
   line-height: 1;
 }
 .cc-duration {
-  position: absolute; bottom: 2px; right: 4px;
+  position: absolute;
+  bottom: 2px;
+  right: 4px;
   font-size: 7px;
   color: rgba(0, 0, 0, 0.7);
   font-weight: 700;
   letter-spacing: 0.1em;
 }
-.cc-body { flex: 1; min-width: 0; }
+.cc-body {
+  flex: 1;
+  min-width: 0;
+}
 .cc-name {
   font-size: 13px;
   font-weight: 700;
   margin-bottom: 4px;
-  display: flex; align-items: center; gap: 4px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .cc-tag {
   font-size: 8px;
@@ -430,18 +586,24 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
   letter-spacing: 0.1em;
 }
 .cc-meta {
-  display: flex; gap: 4px;
+  display: flex;
+  gap: 4px;
   font-size: 10px;
   color: var(--color-text-2);
   letter-spacing: 0.1em;
 }
 .cc-check {
-  position: absolute; top: 8px; right: 8px;
-  width: 18px; height: 18px;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 18px;
+  height: 18px;
   background: var(--accent);
   color: #000;
   border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 11px;
   font-weight: 700;
   box-shadow: 0 0 8px var(--accent);
@@ -455,7 +617,9 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
 }
 
 // 时长
-.duration-display { text-align: right; }
+.duration-display {
+  text-align: right;
+}
 .dur-num {
   font-size: 40px;
   font-weight: 700;
@@ -463,20 +627,38 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
   line-height: 1;
   text-shadow: 0 0 12px rgba(255, 46, 46, 0.4);
 }
-.dur-unit { font-size: 10px; color: var(--color-text-2); letter-spacing: 0.2em; }
-.slider-wrap { padding: 0 8px 30px; }
-:deep(.el-slider__runway) { background: var(--color-ink-3); height: 4px; }
-:deep(.el-slider__bar) { background: linear-gradient(90deg, var(--color-flame), var(--color-pink)); height: 4px; }
+.dur-unit {
+  font-size: 10px;
+  color: var(--color-text-2);
+  letter-spacing: 0.2em;
+}
+.slider-wrap {
+  padding: 0 8px 30px;
+}
+:deep(.el-slider__runway) {
+  background: var(--color-ink-3);
+  height: 4px;
+}
+:deep(.el-slider__bar) {
+  background: linear-gradient(90deg, var(--color-flame), var(--color-pink));
+  height: 4px;
+}
 :deep(.el-slider__button) {
-  width: 18px; height: 18px;
+  width: 18px;
+  height: 18px;
   background: var(--color-flame);
   border: 2px solid var(--color-text-0);
   box-shadow: 0 0 12px var(--color-flame);
 }
-:deep(.el-slider__marks-text) { font-size: 10px; color: var(--color-text-2); }
+:deep(.el-slider__marks-text) {
+  font-size: 10px;
+  color: var(--color-text-2);
+}
 
 // 自感强度
-.effort-readout { text-align: right; }
+.effort-readout {
+  text-align: right;
+}
 .er-z {
   font-size: 28px;
   color: var(--color-flame);
@@ -484,7 +666,12 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
   letter-spacing: -0.02em;
   text-shadow: 0 0 10px rgba(255, 46, 46, 0.3);
 }
-.er-name { font-size: 10px; color: var(--color-text-2); letter-spacing: 0.2em; margin-top: 2px; }
+.er-name {
+  font-size: 10px;
+  color: var(--color-text-2);
+  letter-spacing: 0.2em;
+  margin-top: 2px;
+}
 
 .effort-bar {
   display: grid;
@@ -492,7 +679,11 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
   gap: 6px;
   margin-top: 4px;
 }
-@media (max-width: 768px) { .effort-bar { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 768px) {
+  .effort-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 .effort-cell {
   padding: 14px 10px;
   background: var(--color-ink-0);
@@ -507,19 +698,31 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
   &::before {
     content: "";
     position: absolute;
-    left: 0; right: 0; bottom: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     height: 3px;
     background: var(--zone-color);
     opacity: 0.3;
     transition: all 0.2s;
   }
-  &:hover { border-color: var(--zone-color); }
-  &.on { border-color: var(--zone-color); &::before { opacity: 0.5; } }
+  &:hover {
+    border-color: var(--zone-color);
+  }
+  &.on {
+    border-color: var(--zone-color);
+    &::before {
+      opacity: 0.5;
+    }
+  }
   &.active {
     border-color: var(--zone-color);
     background: color-mix(in srgb, var(--zone-color) 12%, transparent);
     box-shadow: 0 0 16px color-mix(in srgb, var(--zone-color) 30%, transparent);
-    &::before { height: 100%; opacity: 0.15; }
+    &::before {
+      height: 100%;
+      opacity: 0.15;
+    }
   }
 }
 .ec-num {
@@ -529,9 +732,24 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
   letter-spacing: -0.02em;
   text-shadow: 0 0 10px color-mix(in srgb, var(--zone-color) 30%, transparent);
 }
-.ec-name { font-size: 12px; font-weight: 700; margin-top: 4px; letter-spacing: 0.05em; }
-.ec-bpm { font-size: 9px; color: var(--color-text-2); letter-spacing: 0.15em; margin-top: 2px; }
-.suggestion { font-size: 10px; color: var(--color-text-2); margin-top: 10px; letter-spacing: 0.2em; }
+.ec-name {
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 4px;
+  letter-spacing: 0.05em;
+}
+.ec-bpm {
+  font-size: 9px;
+  color: var(--color-text-2);
+  letter-spacing: 0.15em;
+  margin-top: 2px;
+}
+.suggestion {
+  font-size: 10px;
+  color: var(--color-text-2);
+  margin-top: 10px;
+  letter-spacing: 0.2em;
+}
 
 // 心情
 .mood-grid {
@@ -539,9 +757,15 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
   grid-template-columns: repeat(5, 1fr);
   gap: 8px;
 }
-@media (max-width: 768px) { .mood-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 768px) {
+  .mood-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 .mood-pill {
-  display: flex; align-items: center; gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 12px;
   background: var(--color-ink-0);
   border: 1px solid var(--color-line);
@@ -550,16 +774,25 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
   font-family: inherit;
   text-align: left;
   transition: all 0.15s;
-  &:hover { border-color: var(--color-flame); }
+  &:hover {
+    border-color: var(--color-flame);
+  }
   &.active {
     border-color: var(--color-flame);
     background: rgba(255, 46, 46, 0.08);
     box-shadow: 0 0 12px rgba(255, 46, 46, 0.3);
   }
 }
-.mood-emoji { font-size: 22px; }
-.mood-text { flex: 1; }
-.mood-label { font-size: 12px; font-weight: 600; }
+.mood-emoji {
+  font-size: 22px;
+}
+.mood-text {
+  flex: 1;
+}
+.mood-label {
+  font-size: 12px;
+  font-weight: 600;
+}
 .mood-tag {
   font-size: 8px;
   color: var(--color-text-2);
@@ -574,8 +807,8 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
 
 // 提交
 .submit-bar {
-  display: flex; gap: 10px;
-  margin-top: 8px;
+  display: flex;
+  gap: 10px;
 }
 .btn-clear {
   padding: 0 24px;
@@ -589,11 +822,15 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
   letter-spacing: 0.2em;
   cursor: pointer;
   transition: all 0.15s;
-  &:hover { color: var(--color-text-0); border-color: var(--color-text-1); }
+  &:hover {
+    color: var(--color-text-0);
+    border-color: var(--color-text-1);
+  }
 }
 .btn-submit {
   flex: 1;
   height: 60px;
+  padding: 0 24px;
   background: var(--color-ink-0);
   border: 1px solid var(--color-line);
   border-radius: var(--radius);
@@ -601,12 +838,22 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
   font-family: inherit;
   color: var(--color-text-2);
   transition: all 0.2s;
+  overflow: hidden;
   &.active {
     background: var(--accent);
     border-color: var(--accent);
     color: #fff;
     box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 40%, transparent);
-    &:hover { transform: translateY(-2px); }
+    .arr {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateX(4px);
+    }
+    &:hover {
+      transform: translateY(-2px);
+    }
+    &:hover .arr {
+      transform: translateX(8px);
+    }
   }
   &.updating.active {
     background: var(--color-cyan);
@@ -614,17 +861,60 @@ const durationMarks = { 5: "5", 30: "30", 60: "60", 90: "90" };
     color: #fff;
     box-shadow: 0 8px 24px rgba(0, 229, 255, 0.3);
   }
+  .btn-content,
+  .btn-loading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    height: 100%;
+    justify-content: space-between;
+    position: relative;
+    .flame {
+      font-size: 26px;
+    }
+    .txt {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      align-items: flex-start;
+      flex: 1;
+      min-width: 0;
+    }
+    .txt-cn {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+    }
+    .txt-en {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      opacity: 0.75;
+      font-weight: 500;
+    }
+    .arr {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      line-height: 1;
+      transition: all 0.2s;
+      color: var(--color-text-1);
+    }
+  }
 }
-.btn-content, .btn-loading {
-  display: flex; align-items: center; gap: 14px;
-  width: 100%; height: 100%;
-  padding: 0 24px;
-  justify-content: space-between;
+
+.btn-loading {
+  letter-spacing: 0.15em;
+  font-size: 12px;
+  justify-content: center;
 }
-.flame { font-size: 26px; }
-.txt { display: flex; flex-direction: column; gap: 2px; align-items: flex-start; flex: 1; min-width: 0; }
-.txt-cn { font-size: 18px; font-weight: 900; letter-spacing: 0.05em; }
-.txt-en { font-size: 10px; letter-spacing: 0.2em; opacity: 0.75; font-weight: 500; }
-.arr { font-size: 24px; flex-shrink: 0; line-height: 1; }
-.btn-loading { letter-spacing: 0.15em; font-size: 12px; justify-content: center; }
 </style>
