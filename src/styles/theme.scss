@@ -1,0 +1,110 @@
+@use "sass:color";
+
+// =============================================
+// 运动打卡 —— 白天训练场
+// =============================================
+
+// --- 色板 ---
+$ink-0: #F4F5F8;         // 页面底
+$ink-1: #FFFFFF;         // 卡片底
+$ink-2: #FFFFFF;         // 卡片底
+$ink-3: #EEF0F4;         // hover/二级卡片
+$ink-4: #DDE0E8;         // 分隔/描边
+$line:  #DDE0E8;         // 通用描边
+
+// 霓虹强调
+$flame:  #FF2E2E;        // 主色 - 火焰红
+$flame-2: #FF4D4D;       // 浅火焰
+$pink:   #FF3D8A;        // 霓虹粉
+$acid:   #C2D600;        // 警示黄(亮底降饱和)
+$lime:   #00B85C;        // 完成绿
+$cyan:   #00A6CC;        // 数据青
+$violet: #5B3BFF;        // 紫
+
+// 文字
+$text-0: #14161E;        // 主文字
+$text-1: #3A3D52;        // 二级
+$text-2: #5A5E78;        // 三级/弱化
+$text-3: #8A8FA5;        // 极度弱化
+
+// 强度带(心率分区)
+$zone-1: #00B894;         // 恢复 Recovery
+$zone-2: #00A6CC;         // 燃脂 Fat-burn
+$zone-3: #7B5BFF;         // 有氧 Aerobic
+$zone-4: #FF7A00;         // 阈值 Threshold
+$zone-5: #FF2E55;         // 无氧 Anaerobic
+
+// 字体
+$font-display: "Bebas Neue", "Oswald", "Arial Narrow", sans-serif;
+$font-mono: "JetBrains Mono", "Roboto Mono", "Consolas", monospace;
+$font-body: "Manrope", "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+$font-cn-display: "Noto Sans SC", "Manrope", sans-serif;
+
+// 间距
+$radius: 14px;
+$radius-sm: 8px;
+$radius-lg: 22px;
+
+:root {
+  // 基础色
+  --color-ink-0: #{$ink-0};
+  --color-ink-1: #{$ink-1};
+  --color-ink-2: #{$ink-2};
+  --color-ink-3: #{$ink-3};
+  --color-ink-4: #{$ink-4};
+  --color-line: #{$line};
+
+  --color-flame: #{$flame};
+  --color-flame-2: #{$flame-2};
+  --color-pink: #{$pink};
+  --color-acid: #{$acid};
+  --color-lime: #{$lime};
+  --color-cyan: #{$cyan};
+  --color-violet: #{$violet};
+
+  --color-text-0: #{$text-0};
+  --color-text-1: #{$text-1};
+  --color-text-2: #{$text-2};
+  --color-text-3: #{$text-3};
+
+  --color-zone-1: #{$zone-1};
+  --color-zone-2: #{$zone-2};
+  --color-zone-3: #{$zone-3};
+  --color-zone-4: #{$zone-4};
+  --color-zone-5: #{$zone-5};
+
+  --font-display: #{$font-display};
+  --font-mono: #{$font-mono};
+  --font-body: #{$font-body};
+  --font-cn-display: #{$font-cn-display};
+
+  --radius: #{$radius};
+  --radius-sm: #{$radius-sm};
+  --radius-lg: #{$radius-lg};
+
+  // Element Plus 亮色变量覆盖
+  --el-bg-color: #{$ink-2};
+  --el-bg-color-page: #{$ink-0};
+  --el-bg-color-overlay: #{$ink-2};
+  --el-text-color-primary: #{$text-0};
+  --el-text-color-regular: #{$text-0};
+  --el-text-color-secondary: #{$text-1};
+  --el-text-color-placeholder: #{$text-2};
+  --el-border-color: #{$line};
+  --el-border-color-light: #{$line};
+  --el-border-color-lighter: #{$line};
+  --el-fill-color-blank: #{$ink-2};
+  --el-fill-color-light: #{$ink-3};
+  --el-color-primary: #{$flame};
+  --el-color-primary-light-3: #{color.mix($flame, white, 70%)};
+  --el-color-primary-light-5: #{color.mix($flame, white, 50%)};
+  --el-color-primary-light-7: #{color.mix($flame, white, 30%)};
+  --el-color-primary-light-8: #{color.mix($flame, white, 20%)};
+  --el-color-primary-light-9: #{color.mix($flame, white, 10%)};
+  --el-color-primary-dark-2: #{color.adjust($flame, $lightness: -8%)};
+  --el-color-success: #{$lime};
+  --el-color-warning: #{$acid};
+  --el-color-danger: #{$flame};
+  --el-box-shadow-light: 0 4px 24px rgba(20, 22, 30, 0.08);
+  --el-box-shadow: 0 12px 40px rgba(20, 22, 30, 0.12);
+}
